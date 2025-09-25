@@ -42,10 +42,10 @@ module.exports = {
 👉 Tại thư mục root, sử dụng câu lệnh: node_modules/.bin/sequelize init 
 => npx sequelize-cli init
 
-👉 3. Tạo model: 
+👉 3. Tạo model - tương đương tạo table: 
 npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
 
-👉 4: Tạo migrations: 
+👉 4: Tạo migrations: để tự động map table vào database
 npx sequelize-cli db:migrate
 
 👉5. Tạo Seeder (tạo data) : npx sequelize-cli seed:generate --name demo-user 

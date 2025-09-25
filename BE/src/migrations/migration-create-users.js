@@ -1,6 +1,9 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+
+    // have add column for this table 
+    // await queryInterface.createColumn => example
     await queryInterface.createTable("Users", {
       id: {
         allowNull: false,

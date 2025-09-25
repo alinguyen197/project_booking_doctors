@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here // định danh mối quan hệ với các bảng khác
     }
   }
+  // here no need id because id autoincrement in migration
   Users.init(
     {
       email: DataTypes.STRING,

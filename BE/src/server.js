@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Set up Morgan http middleware log
 app.use(morgan("dev"));
 
+// set up view engine
 viewEngine(app);
 initWebRoutes(app);
 

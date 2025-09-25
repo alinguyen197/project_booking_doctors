@@ -9,6 +9,8 @@ const { Sequelize } = require("sequelize");
 const sequelize = new Sequelize("hoidanit", "root", null, {
   host: "localhost",
   dialect: "mysql",
+  // not show sql query on terminal 
+  // add here + file config.json
   logging: false,
 });
 
