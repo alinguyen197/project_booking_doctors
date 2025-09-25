@@ -1,6 +1,7 @@
 import userService from "../services/userService";
 const handleLogin = async (req, res) => {
   try {
+    console.log(req.body)
     const email = req.body.email;
     const password = req.body.password;
 
@@ -16,20 +17,38 @@ const handleLogin = async (req, res) => {
     // access token : JWT token
     let userData = await userService.handleUserLogin(email, password);
 
-    res.status(200).json({
+    return res.status(200).json({
       errorCode: userData.errorCode,
       message: userData.errorMessage,
       user: userData.user ? userData.user : {},
     });
-  } catch (error) {}
+  } catch (error) { }
 };
 
-const getUserPage = (req, res) => {
+const handleGetAllUser = async (req, res) => {
   try {
-    res.status(200).json({ message: 111 });
-  } catch (error) {}
+    // param : ALL / id
+    let id = req.body.id
+
+    if (!id) {
+      res.status(403).json({
+        errorCode: 1,
+        message: "Missing required parameters",
+        users: []
+      })
+    }
+
+    let users = await userService.getAllUsers(id)
+
+    return res.status(200).json({
+      errorCode: 0,
+      message: 'OK',
+      users
+    });
+  } catch (error) { }
 };
+
 module.exports = {
   handleLogin,
-  getUserPage,
+  handleGetAllUser,
 };
