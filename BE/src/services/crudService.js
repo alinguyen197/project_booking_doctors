@@ -88,4 +88,5 @@ module.exports = {
   getUserInfoById,
   updateUserData,
   deleteUserData,
+  hashUserPassword,
 };

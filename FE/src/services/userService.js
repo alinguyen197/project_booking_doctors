@@ -7,6 +7,12 @@ let userService = {
       password,
     });
   },
+
+  getAllUser(userId) {
+    return axios.post("/api/user/get-all-users", {
+      id: userId,
+    });
+  },
 };
 
 export default userService;
