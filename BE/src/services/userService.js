@@ -149,7 +149,7 @@ let deleteUser = (userId) => {
       // có người dùng chạy tiếp
       await db.sequelize.query("DELETE FROM users WHERE id = :id", {
         replacements: { id: userId },
-        type: db.QueryTypes.DELETE,
+        type: QueryTypes.DELETE,
       });
       // thông báo thành công
       resolve({
@@ -166,9 +166,47 @@ let deleteUser = (userId) => {
   });
 };
 
+let updateUser = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // nếu mà reject trong try thì nó sẽ chạy dô catch
+      let user = await db.Users.findOne({
+        where: { id: data.id },
+        raw: false,
+      });
+      if (user) {
+        user.firstName = data.firstName;
+        user.lastName = data.lastName;
+        user.address = data.address;
+        await user.save();
+        let allUsers = await db.Users.findAll({
+          attributes: {
+            exclude: ["password"],
+          },
+        });
+        resolve({
+          errorCode: 0,
+          message: "Update the user succeeds !",
+        });
+      } else {
+        reject({
+          errorCode: 2,
+          message: "User not found",
+        });
+      }
+    } catch (error) {
+      reject({
+        errorCode: -1,
+        message: error.message || "Có lỗi xảy ra",
+      });
+    }
+  });
+};
+
 module.exports = {
   handleUserLogin,
   getAllUsers,
   createNewUser,
   deleteUser,
+  updateUser,
 };

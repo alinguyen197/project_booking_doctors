@@ -10,6 +10,7 @@ router.post("/login", userController.handleLogin);
 router.post("/get-all-users", userController.handleGetAllUser);
 router.post("/create-new-user", userController.handleCreateNewUser);
 router.post("/delete-user", userController.handleDeleteUser);
+router.post("/update-user", userController.handleUpdateUser);
 
 // Case upload file
 // router.post("/get-all-users", upload.single('file') , userController.handleGetAllUser)

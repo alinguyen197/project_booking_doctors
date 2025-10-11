@@ -70,9 +70,81 @@ const handleDeleteUser = async (req, res) => {
   }
 };
 
+const handleUpdateUser = async (req, res) => {
+  const respExample = {
+    success: null,
+    message: "",
+    errorCode: "",
+    data: null,
+    details: {
+      field: "",
+      reason: "",
+    },
+    meta: {
+      total: null,
+      page: null,
+      limit: null,
+      requestId: null,
+      timestamp: new Date().toISOString(),
+    },
+  };
+  try {
+    const data = req.body;
+
+    // Validation: kiểm tra các trường bắt buộc
+    if (!data.id || !data.firstName || !data.lastName) {
+      return res.status(400).json({
+        ...respExample,
+        success: false,
+        errorCode: "ERR001",
+        details: {
+          field: !data.id ? "id" : !data.firstName ? "firstName" : "lastName",
+          reason: "This field is required",
+        },
+      });
+    }
+
+    let resp = await userService.updateUser(data);
+
+    // Xử lý status code dựa vào errorCode trả về từ service khi tương tác database
+    if (resp.errorCode === 0) {
+      // Thành công
+      return res.status(200).json({
+        ...respExample,
+        success: true,
+        errorCode: "SUC001",
+        message: resp.message,
+      });
+    }
+
+    // Không tìm thấy user
+    if (resp.errorCode === 2) {
+      return res.status(404).json({
+        ...respExample,
+        success: false,
+        errorCode: "ERR002",
+        message: resp.message,
+      });
+    }
+    // Các lỗi nghiệp vụ khác
+    return res.status(400).json(resp);
+  } catch (error) {
+    console.log(error);
+    // Lỗi hệ thống hoặc database
+    return res.status(500).json({
+      ...respExample,
+      success: false,
+      errorCode: error?.errorCode || -1,
+      message: error?.message || "Internal server error",
+      details: error?.details || null,
+    });
+  }
+};
+
 module.exports = {
   handleLogin,
   handleGetAllUser,
   handleCreateNewUser,
   handleDeleteUser,
+  handleUpdateUser,
 };
