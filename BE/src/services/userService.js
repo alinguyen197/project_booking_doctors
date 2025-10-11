@@ -179,11 +179,7 @@ let updateUser = (data) => {
         user.lastName = data.lastName;
         user.address = data.address;
         await user.save();
-        let allUsers = await db.Users.findAll({
-          attributes: {
-            exclude: ["password"],
-          },
-        });
+
         resolve({
           errorCode: 0,
           message: "Update the user succeeds !",
