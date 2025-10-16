@@ -1,4 +1,4 @@
-import userService from "../services/userService";
+import userService from '../services/userService';
 const handleLogin = async (req, res) => {
   try {
     console.log(req.body);
@@ -8,7 +8,7 @@ const handleLogin = async (req, res) => {
     if (!email || !password) {
       return res.status(500).json({
         errorCode: 1,
-        message: "Missing email or password",
+        message: 'Missing email or password',
       });
     }
     // check email
@@ -28,12 +28,12 @@ const handleLogin = async (req, res) => {
 const handleGetAllUser = async (req, res) => {
   try {
     // param : ALL / id
-    let id = req.body.id;
+    let id = req.query.id;
 
     if (!id) {
       res.status(403).json({
         errorCode: 1,
-        message: "Missing required parameters",
+        message: 'Missing required parameters',
         users: [],
       });
     }
@@ -42,7 +42,7 @@ const handleGetAllUser = async (req, res) => {
 
     return res.status(200).json({
       errorCode: 0,
-      message: "OK",
+      message: 'OK',
       users,
     });
   } catch (error) {}
@@ -65,7 +65,7 @@ const handleDeleteUser = async (req, res) => {
     // Nếu mà có lỗi khi gọi thằng service thì trả lỗi ở đây
     return res.status(401).json({
       errorCode: error?.errorCode || -1,
-      message: error?.message || "Delete failed",
+      message: error?.message || 'Delete failed',
     });
   }
 };
@@ -73,12 +73,12 @@ const handleDeleteUser = async (req, res) => {
 const handleUpdateUser = async (req, res) => {
   const respExample = {
     success: null,
-    message: "",
-    errorCode: "",
+    message: '',
+    errorCode: '',
     data: null,
     details: {
-      field: "",
-      reason: "",
+      field: '',
+      reason: '',
     },
     meta: {
       total: null,
@@ -96,10 +96,10 @@ const handleUpdateUser = async (req, res) => {
       return res.status(400).json({
         ...respExample,
         success: false,
-        errorCode: "ERR001",
+        errorCode: 'ERR001',
         details: {
-          field: !data.id ? "id" : !data.firstName ? "firstName" : "lastName",
-          reason: "This field is required",
+          field: !data.id ? 'id' : !data.firstName ? 'firstName' : 'lastName',
+          reason: 'This field is required',
         },
       });
     }
@@ -112,7 +112,7 @@ const handleUpdateUser = async (req, res) => {
       return res.status(200).json({
         ...respExample,
         success: true,
-        errorCode: "SUC001",
+        errorCode: 'SUC001',
         message: resp.message,
       });
     }
@@ -122,7 +122,7 @@ const handleUpdateUser = async (req, res) => {
       return res.status(404).json({
         ...respExample,
         success: false,
-        errorCode: "ERR002",
+        errorCode: 'ERR002',
         message: resp.message,
       });
     }
@@ -135,7 +135,7 @@ const handleUpdateUser = async (req, res) => {
       ...respExample,
       success: false,
       errorCode: error?.errorCode || -1,
-      message: error?.message || "Internal server error",
+      message: error?.message || 'Internal server error',
       details: error?.details || null,
     });
   }
