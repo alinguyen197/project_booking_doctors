@@ -141,7 +141,7 @@ let deleteUser = (userId) => {
       let user = await db.Users.findOne({ where: { id: userId } });
       if (!user) {
         // ko tìm thấy người dùng quăng lỗi return ko chạy bên dưới
-        return reject({
+        return resolve({
           errorCode: 2,
           message: 'Không tìm thấy người dùng',
         });

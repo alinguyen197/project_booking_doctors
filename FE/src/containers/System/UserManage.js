@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
 import CreateUserModal from '../../components/userManagement/CreateUserModal';
 import userService from '../../services/userService';
-
+import { emitter } from '../../utils';
 class UserManage extends Component {
   constructor(props) {
     super(props);
@@ -18,11 +18,34 @@ class UserManage extends Component {
   }
 
   handleAddNewUser = async (data) => {
-    const response = await userService.createNewUser(data);
-    await this.handleGetAllUser();
-    this.setState({
-      show: false,
-    });
+    try {
+      const response = await userService.createNewUser(data);
+      if (response && response.data && response.data.errorCode !== 0) {
+        alert(response.data.message);
+      } else {
+        await this.handleGetAllUser();
+        this.setState({
+          show: false,
+        });
+
+        // EventBus để clear modal ở child component, vì child đang giữ state
+        emitter.emit('EVENT_CLEAR_MODAL_DATA');
+      }
+    } catch (error) {}
+  };
+
+  handleDelete = async (userId) => {
+    try {
+      const response = await userService.deleteUser(userId);
+      if (response && response.data && response.data.errorCode !== 0) {
+        alert(response.data.message);
+      } else {
+        await this.handleGetAllUser();
+        this.setState({
+          show: false,
+        });
+      }
+    } catch (error) {}
   };
 
   toggleUserModal = () => {
@@ -78,25 +101,30 @@ class UserManage extends Component {
               </tr>
             </thead>
             <tbody>
-              {dataUsers.map((item, index) => {
-                return (
-                  <tr key={item.id}>
-                    <td>{index++}</td>
-                    <td>{item.email}</td>
-                    <td>
-                      {item.firstName} {item.lastName}
-                    </td>
-                    <td>
-                      <button type="button" className="btn btn-primary px-1">
-                        Primary
-                      </button>
-                      <button type="button" className="btn btn-danger px-1">
-                        Danger
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {dataUsers &&
+                dataUsers.map((item, index) => {
+                  return (
+                    <tr key={item.id}>
+                      <td>{index++}</td>
+                      <td>{item.email}</td>
+                      <td>
+                        {item.firstName} {item.lastName}
+                      </td>
+                      <td>
+                        <button type="button" className="btn btn-primary px-1">
+                          Primary
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger px-1"
+                          onClick={() => this.handleDelete(item.id)}
+                        >
+                          Danger
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { injectIntl } from 'react-intl';
-import userService from '../../services/userService';
+
+import { emitter } from '../../utils';
+
 class CreateUserModal extends React.Component {
   constructor(props) {
     super(props);
@@ -18,6 +20,25 @@ class CreateUserModal extends React.Component {
       image: '',
       password: '',
     };
+
+    this.listenToEmitter();
+  }
+
+  listenToEmitter() {
+    emitter.on('EVENT_CLEAR_MODAL_DATA', () => {
+      this.setState({
+        email: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        gender: '',
+        roleId: '',
+        positionId: '',
+        phoneNumber: '',
+        image: '',
+        password: '',
+      });
+    });
   }
 
   handleOnChangeInput = (event, id) => {

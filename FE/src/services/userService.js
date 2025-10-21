@@ -16,6 +16,14 @@ let userService = {
   createNewUser(data) {
     return axios.post('/api/user/create-new-user', data);
   },
+
+  deleteUser(userId) {
+    return axios.delete(`/api/user/delete-user`, {
+      data: {
+        userId,
+      },
+    });
+  },
 };
 
 export default userService;
