@@ -24,6 +24,10 @@ let userService = {
       },
     });
   },
+
+  updateUser(data) {
+    return axios.put('/api/user/update-user', data);
+  },
 };
 
 export default userService;

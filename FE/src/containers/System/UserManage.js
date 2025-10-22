@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button } from 'reactstrap';
 import CreateUserModal from '../../components/userManagement/CreateUserModal';
+import UpdateUserModal from '../../components/userManagement/UpdateUserModal';
 import userService from '../../services/userService';
 import { emitter } from '../../utils';
 class UserManage extends Component {
@@ -10,6 +11,8 @@ class UserManage extends Component {
     this.state = {
       dataUsers: [],
       show: false,
+      updateShow: false,
+      userUpdate: {},
     };
   }
 
@@ -48,34 +51,66 @@ class UserManage extends Component {
     } catch (error) {}
   };
 
+  handleGetAllUser = async () => {
+    try {
+      const resp = await userService.getAllUser('ALL');
+      if (resp.data && resp.data.errorCode === 0) {
+        this.setState(
+          {
+            dataUsers: resp.data.users,
+          },
+          () => {
+            // kiểm tra đã setState xong chưa
+            console.log(this.state.dataUsers);
+          }
+        );
+      }
+    } catch (error) {}
+  };
+
+  handleUpdateUser = async (data) => {
+    try {
+      const response = await userService.updateUser(data);
+      if (response.success === false) {
+        alert(response.data.message);
+      } else {
+        await this.handleGetAllUser();
+        this.setState({
+          updateShow: false,
+        });
+      }
+    } catch (error) {}
+  };
+
   toggleUserModal = () => {
     this.setState({
       show: !this.state.show,
     });
   };
 
-  getValueFromChild = (data) => {
-    console.log('check data from child', data);
-    this.handleAddNewUser(data);
+  toggleUpdateUserModal = (user) => {
+    this.setState({
+      updateShow: !this.state.updateShow,
+    });
   };
 
-  handleGetAllUser = async () => {
-    const resp = await userService.getAllUser('ALL');
-    if (resp.data && resp.data.errorCode === 0) {
-      this.setState(
-        {
-          dataUsers: resp.data.users,
-        },
-        () => {
-          // kiểm tra đã setState xong chưa
-          console.log(this.state.dataUsers);
-        }
-      );
+  handleEditUser = (user) => {
+    this.setState({
+      userUpdate: user,
+      updateShow: true,
+    });
+  };
+
+  getValueFromChild = (data, type) => {
+    if (type === 'update') {
+      this.handleUpdateUser(data);
+    } else {
+      this.handleAddNewUser(data);
     }
   };
 
   render() {
-    const { dataUsers, show } = this.state;
+    const { dataUsers, show, updateShow, userUpdate } = this.state;
 
     return (
       <>
@@ -84,6 +119,7 @@ class UserManage extends Component {
             Click Me
           </Button>
           <div className="text-center">Manage users</div>
+
           <CreateUserModal
             toggleUserModal={this.toggleUserModal}
             modal={show}
@@ -91,6 +127,17 @@ class UserManage extends Component {
             size="md"
             emit={this.getValueFromChild}
           />
+
+          {updateShow && (
+            <UpdateUserModal
+              toggleUserModal={this.toggleUpdateUserModal}
+              modal={updateShow}
+              centered
+              size="md"
+              emit={this.getValueFromChild}
+              userUpdate={userUpdate}
+            />
+          )}
           <table className="table table-hover">
             <thead>
               <tr>
@@ -111,15 +158,19 @@ class UserManage extends Component {
                         {item.firstName} {item.lastName}
                       </td>
                       <td>
-                        <button type="button" className="btn btn-primary px-1">
-                          Primary
+                        <button
+                          type="button"
+                          className="btn btn-primary px-1"
+                          onClick={() => this.handleEditUser(item)}
+                        >
+                          Sửa
                         </button>
                         <button
                           type="button"
                           className="btn btn-danger px-1"
                           onClick={() => this.handleDelete(item.id)}
                         >
-                          Danger
+                          Xóa
                         </button>
                       </td>
                     </tr>
